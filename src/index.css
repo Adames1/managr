@@ -12,3 +12,7 @@
     overflow-y: hidden;
   }
 }
+
+.input-box {
+  @apply flex justify-between w-full border rounded-sm px-4 py-3 text-sm placeholder:text-sm;
+}
