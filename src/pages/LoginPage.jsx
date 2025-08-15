@@ -45,7 +45,7 @@ function LoginPage() {
           onChange={(e) => setEmail(e.target.value)}
           label="Correo electrónico"
           htmlFor="email"
-          placeholder="ejemplo@correo.com"
+          placeholder="jhondue@correo.com"
           aria-label="Correo electrónico"
         />
 

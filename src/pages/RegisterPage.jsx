@@ -1,10 +1,17 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { validateEmail } from "../utils/helpers";
-
+import { useAuth } from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
+import toast from "react-hot-toast";
 import Input from "../components/form/Input";
+import { serverTimestamp } from "firebase/firestore";
 
 function RegisterPage() {
+  const { register } = useAuth();
+  const { createUser } = useUser();
+
+  // Estados para los campos del formulario
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,24 +21,46 @@ function RegisterPage() {
     fullName: false,
   });
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     const emailValid = validateEmail(email);
     const passwordValid = password.trim().length >= 8;
+    const nameValid = fullName.trim() !== "";
 
+    // Actualiza estado de errores para mostrar mensajes en UI
     setErrors({
       email: !emailValid,
       password: !passwordValid,
-      fullName: fullName.trim() === "",
+      fullName: !nameValid,
     });
 
-    if (fullName && emailValid && passwordValid) {
-      console.log("Datos correctos");
+    if (nameValid && emailValid && passwordValid) {
+      try {
+        // Registra en Firebase Auth y obtiene credenciales
+        const userCredential = await register(email, password);
+        const { uid } = userCredential.user;
 
-      setFullName("");
-      setEmail("");
-      setPassword("");
+        // Guarda datos adicionales en Firestore
+        await createUser({
+          uid,
+          email,
+          displayName: fullName,
+          createdAt: serverTimestamp(),
+        });
+
+        toast.success("¡Registro exitoso! Bienvenido 👋");
+
+        setFullName("");
+        setEmail("");
+        setPassword("");
+
+        navigate("/");
+      } catch (error) {
+        toast.error(error.message || "Error al registrar el usuario");
+      }
     }
   };
 
@@ -39,7 +68,7 @@ function RegisterPage() {
     <div className="h-full flex-grow flex flex-col items-center justify-center mt-4">
       <h2 className="text-xl font-semibold text-slate-600 mb-8">Regístrate</h2>
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleRegister}
         className="mt-4 w-full max-w-md flex flex-col gap-4"
       >
         <Input
@@ -69,7 +98,7 @@ function RegisterPage() {
           onChange={(e) => setEmail(e.target.value)}
           label="Correo electrónico"
           htmlFor="email"
-          placeholder="ejemplo@correo.com"
+          placeholder="jhondue@correo.com"
           aria-label="Correo electrónico"
         />
         {errors.email ? (
