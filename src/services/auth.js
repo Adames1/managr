@@ -1,7 +1,6 @@
 import { auth } from "./firebase";
 import {
   onAuthStateChanged,
-  updateProfile,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -30,14 +29,6 @@ export const loginUser = async (email, password) => {
 export const logOutUser = async () => {
   try {
     return await signOut(auth);
-  } catch (error) {
-    console.error(error.message);
-  }
-};
-
-export const updateProfileUser = async (displayName) => {
-  try {
-    return await updateProfile(auth.currentUser, displayName);
   } catch (error) {
     console.error(error.message);
   }
