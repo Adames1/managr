@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { listenUserWorkspaces } from "../services/data";
+import { listenUserWorkspaces, listenUserProjects } from "../services/data";
 import { useAuth } from "../hooks/useAuth";
 
 export const CrudContext = createContext();
@@ -7,6 +7,8 @@ export const CrudContext = createContext();
 export const CrudProvider = ({ children }) => {
   const { user } = useAuth();
   const [workspaces, setWorkspaces] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [workspaceId, setWorkspaceId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,8 +22,28 @@ export const CrudProvider = ({ children }) => {
     return () => unsubscribe();
   }, [user?.uid]);
 
+  useEffect(() => {
+    if (!user?.uid || !workspaceId) return;
+
+    setLoading(true);
+
+    const unsubscribe = listenUserProjects(user.uid, workspaceId, (data) => {
+      setProjects(data);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [user?.uid, workspaceId]);
+
   return (
-    <CrudContext.Provider value={{ workspaces, loading }}>
+    <CrudContext.Provider
+      value={{
+        workspaces,
+        loading,
+        setWorkspaceId,
+        projects,
+      }}
+    >
       {children}
     </CrudContext.Provider>
   );

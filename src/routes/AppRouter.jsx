@@ -5,7 +5,8 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import Dashboard from "../pages/user/Dashboard";
 import Workspace from "../pages/user/Workspace";
-import WorkspacesProjects from "../pages/user/WorkspacesProjects";
+import WorkspacesDetails from "../pages/user/WorkspacesDetails";
+import ProjectsDetails from "../pages/user/ProjectsDetails";
 
 function AppRouter() {
   return (
@@ -15,7 +16,11 @@ function AppRouter() {
         <Route element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />
           <Route path="/workspaces" element={<Workspace />} />
-          <Route path="/workspaces/:id" element={<WorkspacesProjects />} />
+          <Route path="/workspaces/:id" element={<WorkspacesDetails />} />
+          <Route
+            path="/workspaces/:id/projects/:id"
+            element={<ProjectsDetails />}
+          />
         </Route>
 
         {/* rutas publicas */}

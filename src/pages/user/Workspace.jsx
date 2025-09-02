@@ -1,9 +1,9 @@
 import { useState } from "react";
+import { useData } from "../../hooks/useData";
 import MainLayout from "../../layouts/MainLayout";
 import Button from "../../components/common/Button";
 import EmptyComponent from "../../components/common/EmptyComponent";
-import Form from "../../components/common/Form";
-import { useData } from "../../hooks/useData";
+import Form from "../../components/workspaces/Form";
 import Card from "../../components/workspaces/Card";
 
 function Workspace() {
